@@ -796,10 +796,52 @@ var SC_VERSION = 'v1.0.0-multi';
     $('sc-q-next').onclick = function () { nextQuestion(); };
   }
 
-  /* ---------- Service Worker（单文件 file:// 打开时自动跳过） ---------- */
+  /* ---------- Service Worker（单文件 file:// 打开时自动跳过） ----------
+     新版不再静默接管：新 worker 安装后置为 waiting，页面弹提示条，
+     用户点“立即更新”才 skipWaiting 接管并刷新（首帧不弹、不误刷）。 */
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    var waitingWorker = null, applyClicked = false, reloaded = false, dismissed = false;
+
+    function showUpdateBar() {
+      if (dismissed) return;
+      var bar = $('sc-update-bar');
+      if (bar) bar.classList.remove('sc-hidden');
+    }
+    function applyUpdate() {
+      if (!waitingWorker) { window.location.reload(); return; }
+      applyClicked = true;
+      try { waitingWorker.postMessage({ action: 'SKIP_WAITING' }); } catch (e) { window.location.reload(); }
+    }
+    // 新 worker 接管后刷新一次（仅用户主动点更新后）
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (applyClicked && !reloaded) { reloaded = true; window.location.reload(); }
+    });
+
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('./sw.js').catch(function () {});
+      navigator.serviceWorker.register('./sw.js').then(function (reg) {
+        // 已有旧版本控制页面时，waiting 才代“有更新”（首次安装 controller 为空→不提示）
+        if (reg.waiting && navigator.serviceWorker.controller) { waitingWorker = reg.waiting; showUpdateBar(); }
+        reg.addEventListener('updatefound', function () {
+          var w = reg.installing;
+          if (!w) return;
+          w.addEventListener('statechange', function () {
+            if (w.state === 'installed' && navigator.serviceWorker.controller) {
+              waitingWorker = w; showUpdateBar();
+            }
+          });
+        });
+        // 长时间挂着也能感知新版：定时 + 回到前台时主动检查
+        setInterval(function () { try { reg.update(); } catch (e) {} }, 60 * 60 * 1000);
+        document.addEventListener('visibilitychange', function () {
+          if (!document.hidden) { try { reg.update(); } catch (e) {} }
+        });
+      }).catch(function () {});
+
+      var btn = $('sc-update-btn'), later = $('sc-update-later');
+      if (btn) btn.onclick = applyUpdate;
+      if (later) later.onclick = function () {
+        dismissed = true; $('sc-update-bar').classList.add('sc-hidden');
+      };
     });
   }
 
@@ -814,6 +856,7 @@ var SC_VERSION = 'v1.0.0-multi';
       if (m) ver = m.getAttribute('content');
     } catch (e) {}
     $('sc-version-line').textContent = '词海 WordSea ' + ver + ' · ' + SC_VERSION;
+    var av = $('sc-about-ver'); if (av) av.textContent = '版本 ' + ver;
 
     bindEvents();
     refreshCounts();
