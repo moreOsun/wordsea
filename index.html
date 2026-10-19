@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#215d73">
   <meta name="application-name" content="词海">
-  <meta name="app-version" content="v1.3.0">
-  <meta name="description" content="词海 WordSea — 四六级·考研英语词汇离线背单词助手，内置词库、每日一句、打卡与发音，无需联网。">
+  <meta name="app-version" content="v1.4.0">
+  <meta name="description" content="词海 WordSea — 英语词汇离线背单词助手，内置词库、每日一句、打卡与发音，无需联网。">
   <title>词海 WordSea · 背单词</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 
@@ -296,7 +296,7 @@
       <div class="sc-card">
         <h3 class="sc-card-title">词海 WordSea</h3>
         <p class="sc-about-p">四六级 · 考研词汇离线背单词助手。词库、发音、每日一句与记忆训练全部内置，安装后断网也能用，不收集任何个人信息。</p>
-        <p class="sc-about-ver">版本 v1.3.0</p>
+        <p class="sc-about-ver" id="sc-about-ver">版本 v1.4.0</p>
       </div>
 
       <div class="sc-card sc-sponsor">
@@ -323,13 +323,19 @@
     <button data-view-list="star"><span class="sc-tab-ico">★</span><span>生词本</span></button>
   </nav>
 
+  <div id="sc-update-bar" class="sc-update-bar sc-hidden">
+    <span class="sc-update-txt">发现新版本</span>
+    <button type="button" id="sc-update-btn" class="sc-update-btn">立即更新</button>
+    <button type="button" id="sc-update-later" class="sc-update-x" title="以后再说">✕</button>
+  </div>
+
   <div id="sc-toast" class="sc-toast sc-hidden"></div>
 
-  <script src="data-cet4.js?v=4"></script>
-  <script src="data-cet6.js?v=4"></script>
-  <script src="data-kaoyan.js?v=4"></script>
-  <script src="data-sentence.js?v=4"></script>
-  <script src="data-extra.js?v=4"></script>
-  <script src="app.js?v=4"></script>
+  <script src="data-cet4.js?v=5"></script>
+  <script src="data-cet6.js?v=5"></script>
+  <script src="data-kaoyan.js?v=5"></script>
+  <script src="data-sentence.js?v=5"></script>
+  <script src="data-extra.js?v=5"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
