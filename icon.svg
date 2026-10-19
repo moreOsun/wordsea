@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#215d73"/>
+      <stop offset="1" stop-color="#3d89a0"/>
+    </linearGradient>
+  </defs>
+  <!-- 圆角渐变底 -->
+  <rect x="0" y="0" width="512" height="512" rx="112" ry="112" fill="url(#bg)"/>
+  <!-- 白色词表卡片 -->
+  <rect x="96" y="110" width="320" height="292" rx="28" ry="28" fill="#ffffff"/>
+  <!-- 三行：圆点 + 词条横条 -->
+  <circle cx="150" cy="175" r="15" fill="#c8632a"/>
+  <rect x="184" y="163" width="206" height="24" rx="12" ry="12" fill="#1c3540"/>
+  <circle cx="150" cy="246" r="15" fill="#215d73"/>
+  <rect x="184" y="234" width="176" height="24" rx="12" ry="12" fill="#1c3540"/>
+  <circle cx="150" cy="317" r="15" fill="#3d89a0"/>
+  <rect x="184" y="305" width="146" height="24" rx="12" ry="12" fill="#1c3540"/>
+</svg>
