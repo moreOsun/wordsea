@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#215d73">
   <meta name="application-name" content="词海">
-  <meta name="app-version" content="v1.1.0">
+  <meta name="app-version" content="v1.2.0">
   <meta name="description" content="词海 WordSea — 四六级·考研英语词汇离线背单词助手，内置词库、每日一句、打卡与发音，无需联网。">
-  <title>词海 WordSea · 四六级考研背单词</title>
+  <title>词海 WordSea · 背单词</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -63,6 +63,15 @@
           <p class="sc-tip" id="sc-review-tip">按遗忘曲线安排，暂无待复习单词</p>
         </div>
         <button type="button" id="sc-go-review" class="sc-btn-ghost">复习 <b id="sc-due-n">0</b></button>
+      </div>
+
+      <!-- 学习统计 / 曲线 -->
+      <div class="sc-card sc-train">
+        <div class="sc-train-l">
+          <h3 class="sc-card-title">学习曲线</h3>
+          <p class="sc-tip" id="sc-stats-summary">累计学习 0 词，开始训练后自动生成曲线</p>
+        </div>
+        <button type="button" id="sc-go-stats" class="sc-btn-ghost">查看</button>
       </div>
 
       <!-- 搜索 -->
@@ -225,6 +234,41 @@
     </main>
   </section>
 
+  <!-- ============ 学习曲线统计 ============ -->
+  <section id="sc-view-stats" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-stats-back" class="sc-btn-round">‹</button>
+        <div class="sc-list-hd-mid"><h1>学习曲线</h1></div>
+      </div>
+    </header>
+    <main class="sc-body">
+      <div class="sc-kpi-row">
+        <div class="sc-kpi"><b id="sc-kpi-touch">0</b><span>累计学习</span></div>
+        <div class="sc-kpi"><b id="sc-kpi-acc">0%</b><span>平均正确率</span></div>
+        <div class="sc-kpi"><b id="sc-kpi-master">0</b><span>已掌握</span></div>
+        <div class="sc-kpi"><b id="sc-kpi-streak">0</b><span>连续打卡</span></div>
+      </div>
+      <div class="sc-card">
+        <div class="sc-stats-hd">
+          <h3 class="sc-card-title">每日学习量</h3>
+          <div class="sc-seg sc-seg-mini" id="sc-stats-range">
+            <button type="button" data-days="7">7天</button>
+            <button type="button" data-days="14" class="sc-on">14天</button>
+            <button type="button" data-days="30">30天</button>
+          </div>
+        </div>
+        <div class="sc-chart" id="sc-chart-daily"></div>
+        <div class="sc-chart-axis" id="sc-chart-axis"></div>
+      </div>
+      <div class="sc-card">
+        <h3 class="sc-card-title">累计掌握增长曲线</h3>
+        <svg class="sc-line" id="sc-chart-cum" viewBox="0 0 300 120" preserveAspectRatio="none"></svg>
+        <p class="sc-tip" id="sc-stats-note"></p>
+      </div>
+    </main>
+  </section>
+
   <!-- ============ 我收藏的句子 ============ -->
   <section id="sc-view-sentfav" class="sc-view">
     <header class="sc-hd sc-hd-compact">
@@ -251,11 +295,11 @@
 
   <div id="sc-toast" class="sc-toast sc-hidden"></div>
 
-  <script src="data-cet4.js?v=2"></script>
-  <script src="data-cet6.js?v=2"></script>
-  <script src="data-kaoyan.js?v=2"></script>
-  <script src="data-sentence.js?v=2"></script>
-  <script src="data-extra.js?v=2"></script>
-  <script src="app.js?v=2"></script>
+  <script src="data-cet4.js?v=3"></script>
+  <script src="data-cet6.js?v=3"></script>
+  <script src="data-kaoyan.js?v=3"></script>
+  <script src="data-sentence.js?v=3"></script>
+  <script src="data-extra.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
