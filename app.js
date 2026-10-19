@@ -237,7 +237,7 @@ var SC_VERSION = 'v1.0.0-multi';
   }
 
   /* ---------- 视图切换 ---------- */
-  var views = ['sc-view-home', 'sc-view-list', 'sc-view-word', 'sc-view-train', 'sc-view-quiz', 'sc-view-stats', 'sc-view-sentfav'];
+  var views = ['sc-view-home', 'sc-view-list', 'sc-view-word', 'sc-view-train', 'sc-view-quiz', 'sc-view-stats', 'sc-view-sentfav', 'sc-view-about'];
   var curListTab = '';   // 底部导航高亮用
   function showView(id) {
     for (var v = 0; v < views.length; v++) {
@@ -753,6 +753,9 @@ var SC_VERSION = 'v1.0.0-multi';
     // 学习曲线
     $('sc-go-stats').onclick = function () { renderStats(); showView('sc-view-stats'); };
     $('sc-stats-back').onclick = function () { showView('sc-view-home'); refreshCounts(); };
+    // 关于 / 支持
+    $('sc-go-about').onclick = function () { showView('sc-view-about'); };
+    $('sc-about-back').onclick = function () { showView('sc-view-home'); };
     $('sc-stats-range').onclick = function (e) { segPick(this, e, 'data-days', function (v) { statsRange = parseInt(v, 10) || 14; renderStats(); }); };
     // 训练设置页
     $('sc-train-back').onclick = function () { showView('sc-view-home'); };
