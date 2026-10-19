@@ -44,6 +44,7 @@ var SC_VERSION = 'v1.0.0-multi';
   var CHECK_KEY = 'sc_ws_checkin_v1';   // 打卡：{ last:'YYYY-MM-DD', streak:n, days:{date:1} }
   var SENTFAV_KEY = 'sc_ws_sentfav_v1'; // 每日一句收藏：en 文本数组
   var SRS_KEY = 'sc_ws_srs_v1';         // 艾宾浩斯复习：{ id:{step:n, due:'YYYY-MM-DD'} }
+  var STATS_KEY = 'sc_ws_stats_v1';     // 学习曲线：{ 'YYYY-MM-DD':{t:o,m:o} }（t=答题数, o=对数, m=新增掌握）
 
   function lsGet(key, dft) {
     try { var v = JSON.parse(localStorage.getItem(key)); return v == null ? dft : v; }
@@ -130,6 +131,83 @@ var SC_VERSION = 'v1.0.0-multi';
     return out;
   }
 
+  /* ---------- 学习曲线统计 ---------- */
+  function logStat(ok, becameMaster) {
+    var st = lsGet(STATS_KEY, {}), tk = todayKey();
+    var d = st[tk] || { t: 0, o: 0, m: 0 };
+    d.t = (d.t || 0) + 1;
+    if (ok) d.o = (d.o || 0) + 1;
+    if (becameMaster) d.m = (d.m || 0) + 1;
+    st[tk] = d; lsSet(STATS_KEY, st);
+  }
+  function statsTotals() {
+    var st = lsGet(STATS_KEY, {}), t = 0, o = 0, m = 0;
+    for (var k in st) if (st.hasOwnProperty(k)) { t += st[k].t || 0; o += st[k].o || 0; m += st[k].m || 0; }
+    return { t: t, o: o, m: m };
+  }
+  function lastNDays(n) {
+    var arr = [], d = new Date();
+    for (var i = n - 1; i >= 0; i--) {
+      var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i);
+      arr.push(x.getFullYear() + '-' + pad(x.getMonth() + 1, 2) + '-' + pad(x.getDate(), 2));
+    }
+    return arr;
+  }
+  var statsRange = 14;
+  function renderStats() {
+    var st = lsGet(STATS_KEY, {}), tot = statsTotals();
+    var acc = tot.t ? Math.round(tot.o / tot.t * 100) : 0;
+    var stt = loadStatus(), master = 0;
+    for (var id in stt) if (stt.hasOwnProperty(id) && stt[id] === 'master') master++;
+    var ck = lsGet(CHECK_KEY, { streak: 0, days: {} });
+    $('sc-kpi-touch').textContent = tot.t;
+    $('sc-kpi-acc').textContent = acc + '%';
+    $('sc-kpi-master').textContent = master;
+    $('sc-kpi-streak').textContent = ck.streak || 0;
+
+    // 每日学习量柱状图
+    var days = lastNDays(statsRange), maxT = 1, i;
+    for (i = 0; i < days.length; i++) { var v = (st[days[i]] && st[days[i]].t) || 0; if (v > maxT) maxT = v; }
+    var barBox = $('sc-chart-daily'), axBox = $('sc-chart-axis');
+    barBox.innerHTML = ''; axBox.innerHTML = '';
+    var tkn = todayKey(), recent = 0;
+    for (i = 0; i < days.length; i++) {
+      var k = days[i], tv = (st[k] && st[k].t) || 0; recent += tv;
+      var bar = document.createElement('div');
+      bar.className = 'sc-bar' + (k === tkn ? ' sc-today' : '');
+      bar.style.height = (tv ? Math.max(8, Math.round(tv / maxT * 100)) : 2) + '%';
+      if (tv && statsRange <= 14) { var sp = document.createElement('span'); sp.textContent = tv; bar.appendChild(sp); }
+      barBox.appendChild(bar);
+      var pp = k.split('-');
+      var lab = document.createElement('i');
+      lab.textContent = (statsRange <= 14) ? (pp[1] + '/' + pp[2]) : (i % 5 === 0 ? pp[1] + '/' + pp[2] : '');
+      axBox.appendChild(lab);
+    }
+
+    // 累计掌握增长曲线（SVG，按有记录日的时间顺序累加当日新增掌握）
+    var keys = []; for (var kk in st) if (st.hasOwnProperty(kk)) keys.push(kk);
+    keys.sort();
+    var cum = 0, pts = [];
+    for (i = 0; i < keys.length; i++) { cum += (st[keys[i]].m || 0); pts.push(cum); }
+    var W = 300, H = 120, n = pts.length, maxC = Math.max(1, cum);
+    var svg = $('sc-chart-cum');
+    if (n >= 2) {
+      var xs = [], ys = [], li;
+      for (li = 0; li < n; li++) { xs.push((li / (n - 1)) * W); ys.push(H - (pts[li] / maxC) * (H - 12) - 6); }
+      var linePts = '', area = 'M' + xs[0].toFixed(1) + ',' + H + ' ';
+      for (li = 0; li < n; li++) { linePts += xs[li].toFixed(1) + ',' + ys[li].toFixed(1) + ' '; area += 'L' + xs[li].toFixed(1) + ',' + ys[li].toFixed(1) + ' '; }
+      area += 'L' + xs[n - 1].toFixed(1) + ',' + H + ' Z';
+      svg.innerHTML = '<path class="sc-area" d="' + area + '"/><polyline class="sc-curve" points="' + linePts + '"/>' +
+        '<circle class="sc-dot" cx="' + xs[n - 1].toFixed(1) + '" cy="' + ys[n - 1].toFixed(1) + '" r="3"/>';
+    } else {
+      svg.innerHTML = '';
+    }
+    var note = $('sc-stats-note');
+    note.textContent = tot.t === 0
+      ? '还没有学习记录，去“训练”里答几题，曲线会自动生成。'
+      : ('共记录 ' + keys.length + ' 天，最近 ' + statsRange + ' 天学习 ' + recent + ' 词，累计新增掌握 ' + tot.m + ' 词。');
+  }
+
   /* ---------- 工具 ---------- */
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -159,7 +237,7 @@ var SC_VERSION = 'v1.0.0-multi';
   }
 
   /* ---------- 视图切换 ---------- */
-  var views = ['sc-view-home', 'sc-view-list', 'sc-view-word', 'sc-view-train', 'sc-view-quiz', 'sc-view-sentfav'];
+  var views = ['sc-view-home', 'sc-view-list', 'sc-view-word', 'sc-view-train', 'sc-view-quiz', 'sc-view-stats', 'sc-view-sentfav'];
   var curListTab = '';   // 底部导航高亮用
   function showView(id) {
     for (var v = 0; v < views.length; v++) {
@@ -309,8 +387,9 @@ var SC_VERSION = 'v1.0.0-multi';
   function daySentenceIdx() {
     if (!SENTENCES.length) return 0;
     var d = new Date();
-    var seed = d.getFullYear() * 372 + (d.getMonth() + 1) * 31 + d.getDate();
-    return seed % SENTENCES.length;
+    // 用「连续日序」取模：相邻两天索引必相邻，只要总数 >= 366，任意连续 365 天必不重复
+    var dayNum = Math.floor(new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() / 86400000);
+    return ((dayNum % SENTENCES.length) + SENTENCES.length) % SENTENCES.length;
   }
   function showSentence(advance) {
     if (!SENTENCES.length) return;
@@ -363,6 +442,11 @@ var SC_VERSION = 'v1.0.0-multi';
     $('sc-stats-line').textContent = '收录四级 ' + BY_CAT.cet4.length + ' 词、六级 ' + BY_CAT.cet6.length +
       ' 词、考研 ' + BY_CAT.kaoyan.length + ' 词，共 ' + ALL.length + ' 词；在学 ' + learning +
       ' 词、已掌握 ' + master + ' 词、生词本 ' + star.length + ' 词。';
+    // 首页学习曲线摘要
+    var tot = statsTotals();
+    var tacc = tot.t ? Math.round(tot.o / tot.t * 100) : 0;
+    var ss = $('sc-stats-summary');
+    if (ss) ss.textContent = tot.t ? ('累计学习 ' + tot.t + ' 词 · 正确率 ' + tacc + '% · 已掌握 ' + master + ' 词') : '累计学习 0 词，开始训练后自动生成曲线';
     // 今日复习（艾宾浩斯到期）计数
     var due = dueList().length;
     var dn = $('sc-due-n'), dn2 = $('sc-due-n2'), tip = $('sc-review-tip');
@@ -479,9 +563,12 @@ var SC_VERSION = 'v1.0.0-multi';
     quiz.answered = true;
     var w = quiz.cur;
     if (ok) quiz.correct++;
+    var prev = getStatus(w.id);
     srsUpdate(w.id, ok);
+    var becameMaster = false;
     if (!ok) setStatus(w.id, 'learning');
-    else { var e = srsAll()[w.id]; if (e && e.step >= 3) setStatus(w.id, 'master'); }
+    else { var e = srsAll()[w.id]; if (e && e.step >= 3) { setStatus(w.id, 'master'); becameMaster = (prev !== 'master'); } }
+    logStat(ok, becameMaster);
     $('sc-quiz-score').textContent = quiz.correct + ' ✓';
     showFeedback(ok, w);
     $('sc-q-next').classList.remove('sc-hidden');
@@ -527,9 +614,11 @@ var SC_VERSION = 'v1.0.0-multi';
   }
   function cardGrade(g) {
     if (quiz.answered) return;
-    var w = quiz.cur, ok = (g === 'know');
-    if (g === 'know') { setStatus(w.id, 'master'); srsUpdate(w.id, true); }
+    var w = quiz.cur, ok = (g === 'know'), prev = getStatus(w.id);
+    var becameMaster = false;
+    if (g === 'know') { setStatus(w.id, 'master'); srsUpdate(w.id, true); becameMaster = (prev !== 'master'); }
     else { setStatus(w.id, 'learning'); srsUpdate(w.id, false); }
+    logStat(ok, becameMaster);
     quiz.answered = true;
     if (ok) quiz.correct++;
     $('sc-quiz-score').textContent = quiz.correct + ' ✓';
@@ -661,6 +750,10 @@ var SC_VERSION = 'v1.0.0-multi';
     // 记忆训练：首页入口
     $('sc-go-train').onclick = function () { showView('sc-view-train'); };
     $('sc-go-review').onclick = function () { startReview(); };
+    // 学习曲线
+    $('sc-go-stats').onclick = function () { renderStats(); showView('sc-view-stats'); };
+    $('sc-stats-back').onclick = function () { showView('sc-view-home'); refreshCounts(); };
+    $('sc-stats-range').onclick = function (e) { segPick(this, e, 'data-days', function (v) { statsRange = parseInt(v, 10) || 14; renderStats(); }); };
     // 训练设置页
     $('sc-train-back').onclick = function () { showView('sc-view-home'); };
     $('sc-train-range').onclick = function (e) { segPick(this, e, 'data-range', function (v) { trainCfg.range = v; }); };
