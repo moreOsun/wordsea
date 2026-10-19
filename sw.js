@@ -1,8 +1,8 @@
 /* ================= Service Worker - 离线缓存（词海 WordSea） =================
  * 数据文件 data-*.js 一并预缓存：安装完成后完全离线可用
  * 发布新版：递增 CACHE + 同步 index.html 里的 ?v= 串（保证升级后第一次刷新即拿到新代码） */
-var CACHE = 'sc-wordsea-v3';
-var V = '?v=3';
+var CACHE = 'sc-wordsea-v4';
+var V = '?v=4';
 var ASSETS = [
   './',
   './index.html',
@@ -17,7 +17,8 @@ var ASSETS = [
   './icon.svg',
   './icon-192.png',
   './icon-512.png',
-  './icon-180.png'
+  './icon-180.png',
+  './sponsor-wechat.png'
 ];
 
 self.addEventListener('install', function (e) {
