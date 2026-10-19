@@ -1,8 +1,8 @@
 /* ================= Service Worker - 离线缓存（词海 WordSea） =================
  * 数据文件 data-*.js 一并预缓存：安装完成后完全离线可用
  * 发布新版：递增 CACHE + 同步 index.html 里的 ?v= 串（保证升级后第一次刷新即拿到新代码） */
-var CACHE = 'sc-wordsea-v4';
-var V = '?v=4';
+var CACHE = 'sc-wordsea-v5';
+var V = '?v=5';
 var ASSETS = [
   './',
   './index.html',
@@ -24,8 +24,13 @@ var ASSETS = [
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); })
-      .then(function () { return self.skipWaiting(); })
   );
+  // 不再自动 skipWaiting：新 worker 进入 waiting，由页面提示用户后再激活
+});
+
+// 页面点击“立即更新”时发消息，才跳过等待并接管
+self.addEventListener('message', function (e) {
+  if (e.data && e.data.action === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', function (e) {
