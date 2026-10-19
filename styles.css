@@ -353,3 +353,30 @@ body {
   border-radius: 20px; padding: 8px 20px; font-size: 13px;
   max-width: 80%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+/* ---------- 关于 / 赞助 ---------- */
+.sc-about-entry { text-align: center; margin: 12px 0 4px; }
+.sc-about-entry button {
+  background: none; border: 0; cursor: pointer;
+  color: var(--sc-primary); font-size: 13px; opacity: .75; text-decoration: underline;
+}
+.sc-about-p { font-size: 14px; line-height: 1.7; margin: 6px 0; }
+.sc-about-ver { font-size: 12px; color: var(--sc-muted); margin-top: 10px; }
+.sc-sponsor-fig { display: flex; justify-content: center; margin: 14px 0 8px; }
+.sc-sponsor-img {
+  display: none; width: 200px; height: 200px; object-fit: contain;
+  border: 1px solid var(--sc-line); border-radius: 12px; background: var(--sc-card);
+}
+.sc-sponsor-ph {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 200px; height: 200px; padding: 14px; text-align: center;
+  border: 2px dashed var(--sc-primary-2); border-radius: 12px;
+  color: var(--sc-primary); font-size: 14px; line-height: 1.6;
+}
+.sc-sponsor-ph span { font-size: 12px; color: var(--sc-muted); margin-top: 8px; }
+.sc-sponsor-ph code {
+  background: rgba(33, 93, 115, .1); padding: 1px 5px; border-radius: 4px;
+  font-size: 12px; font-family: monospace;
+}
+.sc-about-tip { font-size: 12px; line-height: 1.8; text-align: center; color: var(--sc-muted); margin: 6px 0; }
+.sc-about-foot { text-align: center; font-size: 13px; color: var(--sc-muted); margin: 18px 0 8px; }
