@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#215d73">
   <meta name="application-name" content="词海">
-  <meta name="app-version" content="v1.2.0">
+  <meta name="app-version" content="v1.3.0">
   <meta name="description" content="词海 WordSea — 四六级·考研英语词汇离线背单词助手，内置词库、每日一句、打卡与发音，无需联网。">
   <title>词海 WordSea · 背单词</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -98,6 +98,7 @@
         <p class="sc-tip">全部单词、发音与每日一句已随应用缓存，安装后断网也能背。</p>
       </div>
       <p id="sc-version-line" class="sc-version-line">词海 WordSea</p>
+      <p class="sc-about-entry"><button type="button" id="sc-go-about">关于词海 · 支持作者 ☕</button></p>
     </main>
   </section>
 
@@ -283,6 +284,35 @@
     </main>
   </section>
 
+  <!-- ============ 关于 / 支持 ============ -->
+  <section id="sc-view-about" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-about-back" class="sc-btn-round">‹</button>
+        <div class="sc-list-hd-mid"><h1>关于词海</h1></div>
+      </div>
+    </header>
+    <main class="sc-body">
+      <div class="sc-card">
+        <h3 class="sc-card-title">词海 WordSea</h3>
+        <p class="sc-about-p">四六级 · 考研词汇离线背单词助手。词库、发音、每日一句与记忆训练全部内置，安装后断网也能用，不收集任何个人信息。</p>
+        <p class="sc-about-ver">版本 v1.3.0</p>
+      </div>
+
+      <div class="sc-card sc-sponsor">
+        <h3 class="sc-card-title">☕ 支持词海</h3>
+        <p class="sc-about-p">如果它帮你背下了单词，欢迎请我喝杯咖啡。<b>完全自愿、自由</b>，赞助与否都能使用全部功能，没有任何解锁或差别。</p>
+        <div class="sc-sponsor-fig">
+          <div id="sc-sponsor-ph" class="sc-sponsor-ph">微信收款码 · 占位<br><span>把 <code>sponsor-wechat.png</code> 放进项目根目录，这里会自动显示你的收款码</span></div>
+          <img id="sc-sponsor-img" src="./sponsor-wechat.png" alt="微信收款码" class="sc-sponsor-img" onload="this.style.display='block';document.getElementById('sc-sponsor-ph').style.display='none';">
+        </div>
+        <p class="sc-about-tip">手机：长按上方二维码识别 → 输入任意金额 → 付款<br>电脑：用微信扫码即可</p>
+      </div>
+
+      <p class="sc-about-foot">再次感谢你的使用与支持 🙏</p>
+    </main>
+  </section>
+
   <!-- ============ 底部导航 ============ -->
   <nav class="sc-tabbar">
     <button data-view="sc-view-home" class="sc-on"><span class="sc-tab-ico">✦</span><span>首页</span></button>
@@ -295,11 +325,11 @@
 
   <div id="sc-toast" class="sc-toast sc-hidden"></div>
 
-  <script src="data-cet4.js?v=3"></script>
-  <script src="data-cet6.js?v=3"></script>
-  <script src="data-kaoyan.js?v=3"></script>
-  <script src="data-sentence.js?v=3"></script>
-  <script src="data-extra.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <script src="data-cet4.js?v=4"></script>
+  <script src="data-cet6.js?v=4"></script>
+  <script src="data-kaoyan.js?v=4"></script>
+  <script src="data-sentence.js?v=4"></script>
+  <script src="data-extra.js?v=4"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
