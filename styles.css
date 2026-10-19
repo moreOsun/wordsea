@@ -1,0 +1,329 @@
+/* ================= 词海 WordSea · 样式（类名统一 sc- 前缀） =================
+   兼容约定：不用 inset/gap/aspect-ratio 等新简写（老内核失效），用 margin 兜底 */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --sc-ink: #1c3540;
+  --sc-primary: #215d73;
+  --sc-primary-2: #3d89a0;
+  --sc-accent: #c8632a;
+  --sc-paper: #eef3f4;
+  --sc-card: #ffffff;
+  --sc-line: #d6e3e6;
+  --sc-muted: #7c8a8e;
+  --sc-master: #2f8f5b;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  background: var(--sc-paper);
+  color: var(--sc-ink);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ---------- 视图切换 ---------- */
+.sc-view { display: none; min-height: 100vh; padding-bottom: 76px; }
+.sc-view.sc-active { display: block; }
+.sc-hidden { display: none !important; }
+
+/* ---------- 头部 ---------- */
+.sc-hd {
+  background: linear-gradient(160deg, var(--sc-primary), var(--sc-primary-2));
+  color: #fff;
+  padding: 20px 18px 22px;
+  border-radius: 0 0 22px 22px;
+}
+.sc-hd-compact { padding: 14px 14px 10px; border-radius: 0 0 18px 18px; position: sticky; top: 0; z-index: 10; }
+.sc-hd-row { display: flex; align-items: center; }
+.sc-brand { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+.sc-brand-en { font-size: 12px; font-weight: 400; opacity: .75; margin-left: 8px; letter-spacing: 1px; }
+.sc-brand-sub { font-size: 12px; opacity: .8; margin-top: 4px; }
+.sc-list-hd-mid { flex: 1; margin-left: 8px; min-width: 0; }
+.sc-list-hd-mid h1 { font-size: 18px; display: inline; margin-right: 8px; }
+.sc-list-count { font-size: 12px; opacity: .85; }
+
+/* ---------- 按钮 ---------- */
+.sc-btn-round {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .45);
+  background: rgba(255, 255, 255, .14); color: #fff;
+  font-size: 20px; line-height: 32px; text-align: center; padding: 0;
+  cursor: pointer; flex: none;
+}
+.sc-btn-fav {
+  width: 38px; height: 38px; border-radius: 50%; border: none; flex: none;
+  background: rgba(255, 255, 255, .16); color: #ffd97a; font-size: 20px; cursor: pointer;
+}
+.sc-btn-fav.sc-faved { background: #ffd97a; color: #8a5a00; }
+.sc-btn-ghost {
+  border: 1px solid var(--sc-line); background: var(--sc-card); color: var(--sc-primary);
+  border-radius: 10px; padding: 8px 16px; font-size: 14px; cursor: pointer;
+}
+.sc-btn-mini {
+  border: 1px solid var(--sc-line); background: var(--sc-card); color: var(--sc-muted);
+  border-radius: 8px; padding: 5px 12px; font-size: 12px; cursor: pointer;
+}
+.sc-btn-ghost:active, .sc-btn-mini:active, .sc-btn-round:active { opacity: .7; }
+
+/* ---------- 主体 ---------- */
+.sc-body { padding: 16px 14px 0; max-width: 720px; margin: 0 auto; }
+.sc-card {
+  background: var(--sc-card); border: 1px solid var(--sc-line);
+  border-radius: 16px; padding: 16px; margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(33, 93, 115, .06);
+}
+.sc-card-title { font-size: 15px; color: var(--sc-primary); margin-bottom: 8px; }
+.sc-tip { font-size: 12px; color: var(--sc-muted); margin-top: 6px; }
+
+/* ---------- 每日一句 ---------- */
+.sc-daily { background: linear-gradient(150deg, #ffffff, #e7f1f3); border-color: #cbe0e5; }
+.sc-daily-hd { display: flex; align-items: center; margin-bottom: 8px; }
+.sc-daily-tag {
+  font-size: 12px; color: var(--sc-accent); border: 1px solid var(--sc-accent);
+  border-radius: 20px; padding: 1px 10px;
+}
+.sc-daily-switch {
+  margin-left: auto; border: none; background: none; color: var(--sc-muted);
+  font-size: 12px; cursor: pointer; padding: 4px 6px;
+}
+.sc-daily-en {
+  font-size: 18px; color: var(--sc-ink); line-height: 1.5; font-weight: 600;
+  font-family: "Georgia", "Times New Roman", serif; margin: 6px 0 6px;
+}
+.sc-daily-cn { font-size: 14px; color: #47585e; }
+.sc-daily-src { font-size: 12px; color: var(--sc-muted); margin-top: 4px; text-align: right; }
+.sc-daily-foot { display: flex; margin-top: 12px; }
+.sc-daily-foot .sc-btn-mini + .sc-btn-mini { margin-left: 8px; }
+.sc-daily-foot .sc-btn-mini.sc-faved { color: var(--sc-accent); border-color: var(--sc-accent); }
+
+/* ---------- 打卡 ---------- */
+.sc-checkin { display: flex; align-items: center; }
+.sc-checkin-l { flex: 1; min-width: 0; }
+.sc-checkin-n { font-size: 15px; color: var(--sc-ink); }
+.sc-checkin-n b { font-size: 26px; color: var(--sc-accent); font-weight: 700; }
+.sc-checkin-tip { font-size: 12px; color: var(--sc-muted); margin-top: 2px; }
+.sc-btn-checkin {
+  border: none; border-radius: 22px; padding: 10px 20px; font-size: 15px;
+  color: #fff; cursor: pointer; flex: none;
+  background: linear-gradient(135deg, var(--sc-accent), #e08a4e);
+  box-shadow: 0 3px 10px rgba(200, 99, 42, .28);
+}
+.sc-btn-checkin.sc-done { background: #b8c6ca; box-shadow: none; color: #fff; }
+.sc-btn-checkin:active { opacity: .85; }
+
+/* ---------- 搜索 ---------- */
+.sc-search-wrap { display: flex; margin-bottom: 14px; }
+.sc-search {
+  flex: 1; min-width: 0; border: 1px solid var(--sc-line); border-right: none;
+  border-radius: 12px 0 0 12px; padding: 11px 14px; font-size: 15px;
+  background: var(--sc-card); color: var(--sc-ink); outline: none;
+  -webkit-appearance: none; appearance: none;
+}
+.sc-search-btn {
+  width: 58px; border: none; border-radius: 0 12px 12px 0;
+  background: var(--sc-primary); color: #fff; font-size: 15px; cursor: pointer;
+}
+
+/* ---------- 分类宫格 ---------- */
+.sc-cat-grid { display: flex; flex-wrap: wrap; margin: -5px; }
+.sc-cat-card {
+  width: calc(33.333% - 10px); margin: 5px; min-height: 86px;
+  border: none; border-radius: 14px; color: #fff; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 10px 12px; text-align: left;
+  box-shadow: 0 2px 8px rgba(28, 53, 64, .12);
+}
+.sc-cat-card b { font-size: 16px; letter-spacing: 1px; }
+.sc-cat-card span { font-size: 11px; opacity: .85; margin-top: 4px; }
+.sc-cat-cet4 { background: linear-gradient(140deg, #215d73, #3d89a0); }
+.sc-cat-cet6 { background: linear-gradient(140deg, #2b6f8c, #4f9bb5); }
+.sc-cat-kaoyan { background: linear-gradient(140deg, #1f4e6b, #3f7396); }
+.sc-cat-star { background: linear-gradient(140deg, #b8791f, #d9a441); }
+.sc-cat-master { background: linear-gradient(140deg, #2f8f5b, #58b07f); }
+.sc-cat-rand { background: linear-gradient(140deg, #7c4a86, #a678ad); }
+.sc-cat-sent { background: linear-gradient(140deg, #c8632a, #e0955e); }
+.sc-cat-sent b { font-size: 14px; letter-spacing: 0; }
+.sc-cat-card:active { opacity: .85; }
+
+/* ---------- 统计 ---------- */
+.sc-stats { margin-top: 18px; }   /* 与上方分类宫格拉开间距（宫格容器用 margin:-5px 负边距，需额外预留） */
+.sc-stats-line { font-size: 13px; color: #46585e; }
+.sc-version-line { font-size: 11px; color: var(--sc-muted); text-align: center; margin: 10px 0 20px; }
+
+/* ---------- 单词列表 ---------- */
+.sc-word-list { list-style: none; }
+.sc-word-item {
+  background: var(--sc-card); border: 1px solid var(--sc-line); border-radius: 14px;
+  padding: 12px 15px; margin-bottom: 10px; cursor: pointer;
+  display: flex; align-items: center;
+}
+.sc-word-item:active { background: #e7f1f3; }
+.sc-wi-main { flex: 1; min-width: 0; }
+.sc-wi-w { font-size: 18px; font-weight: 700; color: var(--sc-ink); }
+.sc-wi-p { font-size: 12px; color: var(--sc-muted); margin-left: 8px; font-family: "Georgia", serif; }
+.sc-wi-t {
+  font-size: 13px; color: #55666c; margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sc-wi-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; margin-left: 10px; background: #cfdadd; }
+.sc-wi-dot.sc-lv-learning { background: var(--sc-accent); }
+.sc-wi-dot.sc-lv-master { background: var(--sc-master); }
+.sc-wi-dot.sc-lv-star { background: #d9a441; }
+.sc-load-more { display: block; margin: 6px auto 24px; }
+.sc-empty { text-align: center; color: var(--sc-muted); padding: 40px 0; font-size: 14px; }
+
+/* ---------- 单词详情 ---------- */
+.sc-wordcard {
+  background: var(--sc-card); border: 1px solid var(--sc-line); border-radius: 18px;
+  padding: 26px 20px 20px; margin-bottom: 20px;
+}
+.sc-word-w { font-size: 34px; text-align: center; letter-spacing: 1px; color: var(--sc-ink); word-break: break-all; }
+.sc-word-p { font-size: 15px; color: var(--sc-muted); text-align: center; margin: 6px 0 12px; font-family: "Georgia", serif; }
+.sc-word-say { text-align: center; margin-bottom: 16px; }
+.sc-word-t {
+  font-size: 17px; color: var(--sc-ink); line-height: 1.8;
+  background: #eef5f6; border-radius: 12px; padding: 14px 16px;
+}
+.sc-word-example { margin-top: 14px; border-left: 3px solid var(--sc-primary-2); padding-left: 14px; }
+.sc-ex-en { font-size: 15px; color: #33474f; font-family: "Georgia", serif; line-height: 1.6; }
+.sc-ex-cn { font-size: 13px; color: var(--sc-muted); margin: 4px 0 8px; }
+
+/* ---------- 熟练度 ---------- */
+.sc-mastery { margin-top: 20px; }
+.sc-mastery-label { font-size: 13px; color: var(--sc-muted); }
+.sc-mastery-row { display: flex; margin-top: 8px; }
+.sc-mastery-row .sc-chip {
+  flex: 1; text-align: center; border: 1px solid var(--sc-line); background: var(--sc-card);
+  color: var(--sc-muted); border-radius: 10px; font-size: 14px; padding: 8px 0; cursor: pointer;
+}
+.sc-mastery-row .sc-chip + .sc-chip { margin-left: 8px; }
+.sc-mastery-row .sc-chip.sc-on[data-level="new"] { background: var(--sc-primary); color: #fff; border-color: var(--sc-primary); }
+.sc-mastery-row .sc-chip.sc-on[data-level="learning"] { background: var(--sc-accent); color: #fff; border-color: var(--sc-accent); }
+.sc-mastery-row .sc-chip.sc-on[data-level="master"] { background: var(--sc-master); color: #fff; border-color: var(--sc-master); }
+
+.sc-word-pager { display: flex; align-items: center; margin-top: 20px; }
+.sc-word-pager .sc-btn-ghost { flex: 1; min-width: 0; text-align: center; }
+.sc-word-idx { margin: 0 12px; font-size: 12px; color: var(--sc-muted); flex: none; }
+
+/* ---------- 我藏的句子 ---------- */
+.sc-sent-item {
+  background: var(--sc-card); border: 1px solid var(--sc-line); border-radius: 14px;
+  padding: 13px 15px; margin-bottom: 10px;
+}
+.sc-sent-en { font-size: 16px; color: var(--sc-ink); font-family: "Georgia", serif; line-height: 1.5; }
+.sc-sent-cn { font-size: 13px; color: #55666c; margin-top: 4px; }
+.sc-sent-src { font-size: 12px; color: var(--sc-muted); margin-top: 4px; text-align: right; }
+.sc-sent-tools { display: flex; margin-top: 8px; }
+.sc-sent-tools .sc-btn-mini + .sc-btn-mini { margin-left: 8px; }
+.sc-sent-tools .sc-btn-mini.sc-faved { color: var(--sc-accent); border-color: var(--sc-accent); }
+
+/* ---------- 底部导航 ---------- */
+.sc-tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; background: var(--sc-card);
+  border-top: 1px solid var(--sc-line);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.sc-tabbar button {
+  flex: 1; border: none; background: none; padding: 8px 0 6px;
+  color: var(--sc-muted); font-size: 11px; cursor: pointer;
+}
+.sc-tab-ico { display: block; font-size: 18px; line-height: 1.3; }
+.sc-tabbar button.sc-on { color: var(--sc-primary); font-weight: 600; }
+
+/* ---------- 主按钮 / 通栏 ---------- */
+.sc-btn-primary {
+  border: none; border-radius: 12px; padding: 12px 18px; font-size: 16px; font-weight: 600;
+  color: #fff; cursor: pointer; background: linear-gradient(135deg, var(--sc-primary), var(--sc-primary-2));
+  box-shadow: 0 3px 10px rgba(33, 93, 115, .25);
+}
+.sc-btn-primary:active { opacity: .85; }
+.sc-block { display: block; width: 100%; margin-bottom: 12px; }
+
+/* ---------- 首页：训练 / 复习 入口卡 ---------- */
+.sc-train, .sc-review { display: flex; align-items: center; }
+.sc-train-l { flex: 1; min-width: 0; }
+.sc-train-l .sc-card-title { margin-bottom: 2px; }
+.sc-train .sc-btn-primary { flex: none; padding: 10px 22px; }
+.sc-review .sc-btn-ghost { flex: none; }
+.sc-review .sc-btn-ghost b { color: var(--sc-accent); font-size: 16px; }
+
+/* ---------- 训练设置：分段选择 ---------- */
+.sc-seg { display: flex; flex-wrap: wrap; margin: -4px; }
+.sc-seg button {
+  flex: 1; min-width: 56px; margin: 4px; border: 1px solid var(--sc-line); background: var(--sc-card);
+  color: var(--sc-muted); border-radius: 10px; padding: 9px 0; font-size: 14px; cursor: pointer; text-align: center;
+}
+.sc-seg button.sc-on { background: var(--sc-primary); color: #fff; border-color: var(--sc-primary); font-weight: 600; }
+.sc-train-modes { display: flex; flex-wrap: wrap; margin: -4px; }
+.sc-train-btn {
+  width: calc(50% - 8px); margin: 4px; border: 1px solid var(--sc-line); background: var(--sc-card);
+  color: var(--sc-ink); border-radius: 12px; padding: 14px 8px; font-size: 15px; cursor: pointer; text-align: center;
+}
+.sc-train-btn.sc-on { border-color: var(--sc-accent); color: var(--sc-accent); background: #fdf1e8; font-weight: 600; }
+
+/* ---------- 答题：头部进度 ---------- */
+.sc-quiz-score { flex: none; font-size: 13px; color: #fff; opacity: .9; margin-left: 8px; }
+.sc-progress { height: 6px; background: rgba(255, 255, 255, .25); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+.sc-progress-bar { height: 100%; width: 0; background: #ffd97a; border-radius: 3px; transition: width .25s; }
+
+/* ---------- 答题：题干 ---------- */
+.sc-q-prompt { font-size: 30px; font-weight: 700; color: var(--sc-ink); text-align: center; margin: 22px 0 6px; word-break: break-all; line-height: 1.3; }
+.sc-q-prompt.sc-q-cn { font-size: 22px; }
+.sc-q-sub { font-size: 15px; color: var(--sc-muted); text-align: center; margin-bottom: 8px; font-family: "Georgia", serif; }
+.sc-q-say { text-align: center; margin: 8px 0 4px; }
+
+/* ---------- 答题：选项 ---------- */
+.sc-q-options { margin-top: 14px; }
+.sc-opt {
+  display: block; width: 100%; text-align: left; border: 1px solid var(--sc-line); background: var(--sc-card);
+  border-radius: 12px; padding: 14px 16px; font-size: 16px; color: var(--sc-ink); cursor: pointer; margin-bottom: 10px;
+}
+.sc-opt:active { background: #eef5f6; }
+.sc-opt.sc-correct { border-color: var(--sc-master); background: #eaf6ee; color: var(--sc-master); font-weight: 600; }
+.sc-opt.sc-wrong { border-color: #c0392b; background: #fbecea; color: #c0392b; }
+.sc-opt:disabled { cursor: default; }
+.sc-opt.sc-locked { cursor: default; }
+.sc-opt.sc-locked:not(.sc-correct):not(.sc-wrong) { opacity: .55; }
+
+/* ---------- 答题：拼写 ---------- */
+.sc-q-spell { display: flex; margin-top: 18px; }
+.sc-spell-input {
+  flex: 1; min-width: 0; border: 1px solid var(--sc-line); border-right: none; border-radius: 12px 0 0 12px;
+  padding: 12px 14px; font-size: 18px; background: var(--sc-card); color: var(--sc-ink); outline: none;
+  font-family: "Georgia", serif; -webkit-appearance: none; appearance: none;
+}
+
+/* ---------- 答题：翻卡 ---------- */
+.sc-q-card { margin-top: 14px; }
+.sc-card-reveal {
+  background: var(--sc-card); border: 1px dashed var(--sc-line); border-radius: 14px; padding: 26px 18px;
+  text-align: center; font-size: 18px; color: var(--sc-muted); min-height: 96px; cursor: pointer; line-height: 1.7;
+}
+.sc-card-reveal.sc-shown { color: var(--sc-ink); border-style: solid; font-size: 20px; }
+.sc-card-grade { display: flex; margin-top: 14px; }
+.sc-card-grade .sc-chip { flex: 1; text-align: center; border: 1px solid var(--sc-line); border-radius: 10px; padding: 11px 0; font-size: 15px; cursor: pointer; background: var(--sc-card); color: var(--sc-muted); }
+.sc-card-grade .sc-chip + .sc-chip { margin-left: 8px; }
+.sc-g-no { color: #c0392b !important; border-color: #e7b6b0 !important; }
+.sc-g-fuzzy { color: var(--sc-accent) !important; border-color: #e6c3a3 !important; }
+.sc-g-know { color: var(--sc-master) !important; border-color: #a9d3b8 !important; }
+
+/* ---------- 答题：反馈 / 结果 ---------- */
+.sc-q-feedback { margin: 16px 0 6px; padding: 12px 14px; border-radius: 12px; font-size: 14px; line-height: 1.7; }
+.sc-q-feedback.sc-ok { background: #eaf6ee; color: #256b41; border: 1px solid #bfe3cb; }
+.sc-q-feedback.sc-no { background: #fbecea; color: #a5372a; border: 1px solid #eec4bd; }
+.sc-q-feedback b { font-size: 15px; }
+.sc-quiz-result { text-align: center; padding: 40px 10px; }
+.sc-quiz-result .sc-res-big { font-size: 40px; font-weight: 700; color: var(--sc-primary); }
+.sc-quiz-result .sc-res-line { font-size: 15px; color: #46585e; margin: 8px 0 22px; }
+
+/* ---------- Toast ---------- */
+.sc-toast {
+  position: fixed; left: 50%; bottom: 90px; z-index: 50;
+  transform: translateX(-50%);
+  background: rgba(28, 53, 64, .92); color: #fff;
+  border-radius: 20px; padding: 8px 20px; font-size: 13px;
+  max-width: 80%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
