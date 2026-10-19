@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#215d73">
+  <meta name="application-name" content="词海">
+  <meta name="app-version" content="v1.1.0">
+  <meta name="description" content="词海 WordSea — 四六级·考研英语词汇离线背单词助手，内置词库、每日一句、打卡与发音，无需联网。">
+  <title>词海 WordSea · 四六级考研背单词</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+  <!-- ============ 首页：每日一句 + 打卡 + 分类入口 + 搜索 ============ -->
+  <section id="sc-view-home" class="sc-view sc-active">
+    <header class="sc-hd">
+      <div class="sc-brand">词海<span class="sc-brand-en">WordSea</span></div>
+      <div class="sc-brand-sub" id="sc-home-date">--</div>
+    </header>
+    <main class="sc-body">
+      <!-- 每日一句 -->
+      <div class="sc-card sc-daily" id="sc-daily-card">
+        <div class="sc-daily-hd">
+          <span class="sc-daily-tag">每日一句</span>
+          <button type="button" id="sc-daily-switch" class="sc-daily-switch">换一句 ⟳</button>
+        </div>
+        <p class="sc-daily-en" id="sc-daily-en">--</p>
+        <p class="sc-daily-cn" id="sc-daily-cn">--</p>
+        <p class="sc-daily-src" id="sc-daily-src"></p>
+        <div class="sc-daily-foot">
+          <button type="button" id="sc-daily-speak" class="sc-btn-mini">🔊 朗读</button>
+          <button type="button" id="sc-daily-fav" class="sc-btn-mini">☆ 收藏句子</button>
+        </div>
+      </div>
+
+      <!-- 打卡 -->
+      <div class="sc-card sc-checkin">
+        <div class="sc-checkin-l">
+          <div class="sc-checkin-n"><b id="sc-streak">0</b> 天</div>
+          <div class="sc-checkin-tip" id="sc-checkin-tip">连续打卡，坚持记忆</div>
+        </div>
+        <button type="button" id="sc-checkin-btn" class="sc-btn-checkin">今日打卡</button>
+      </div>
+
+      <!-- 记忆训练入口 -->
+      <div class="sc-card sc-train">
+        <div class="sc-train-l">
+          <h3 class="sc-card-title">记忆训练</h3>
+          <p class="sc-tip">翻卡背诵 · 看词选义 · 听音选义 · 拼写训练，多种方式</p>
+        </div>
+        <button type="button" id="sc-go-train" class="sc-btn-primary">进入</button>
+      </div>
+
+      <!-- 今日复习（艾宾浩斯） -->
+      <div class="sc-card sc-review">
+        <div class="sc-train-l">
+          <h3 class="sc-card-title">今日复习</h3>
+          <p class="sc-tip" id="sc-review-tip">按遗忘曲线安排，暂无待复习单词</p>
+        </div>
+        <button type="button" id="sc-go-review" class="sc-btn-ghost">复习 <b id="sc-due-n">0</b></button>
+      </div>
+
+      <!-- 搜索 -->
+      <div class="sc-search-wrap">
+        <input type="search" id="sc-search-input" class="sc-search" placeholder="搜索单词 / 中文释义…" autocomplete="off">
+        <button type="button" id="sc-search-btn" class="sc-search-btn">搜</button>
+      </div>
+
+      <!-- 分类宫格 -->
+      <div class="sc-cat-grid">
+        <button class="sc-cat-card sc-cat-cet4" data-list="cet4"><b>四级词汇</b><span id="sc-cat-cet4-n">0 词</span></button>
+        <button class="sc-cat-card sc-cat-cet6" data-list="cet6"><b>六级词汇</b><span id="sc-cat-cet6-n">0 词</span></button>
+        <button class="sc-cat-card sc-cat-kaoyan" data-list="kaoyan"><b>考研词汇</b><span id="sc-cat-kaoyan-n">0 词</span></button>
+        <button class="sc-cat-card sc-cat-star" data-list="star"><b>生词本</b><span id="sc-cat-star-n">0 词</span></button>
+        <button class="sc-cat-card sc-cat-master" data-list="master"><b>已掌握</b><span id="sc-cat-master-n">0 词</span></button>
+        <button class="sc-cat-card sc-cat-rand" id="sc-btn-random"><b>随机一词</b><span>开盲盒</span></button>
+        <button class="sc-cat-card sc-cat-sent" data-nav="sc-view-sentfav"><b>我藏的句子</b><span id="sc-cat-sent-n">0 句</span></button>
+      </div>
+
+      <!-- 统计 -->
+      <div class="sc-card sc-stats">
+        <h3 class="sc-card-title">离线词库</h3>
+        <p class="sc-stats-line" id="sc-stats-line">加载中…</p>
+        <p class="sc-tip">全部单词、发音与每日一句已随应用缓存，安装后断网也能背。</p>
+      </div>
+      <p id="sc-version-line" class="sc-version-line">词海 WordSea</p>
+    </main>
+  </section>
+
+  <!-- ============ 单词列表（分类/生词本/已掌握/搜索结果 共用） ============ -->
+  <section id="sc-view-list" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-list-back" class="sc-btn-round">‹</button>
+        <div class="sc-list-hd-mid">
+          <h1 id="sc-list-title">单词</h1>
+          <span id="sc-list-count" class="sc-list-count">0 词</span>
+        </div>
+      </div>
+    </header>
+    <main class="sc-body">
+      <ul id="sc-word-list" class="sc-word-list"></ul>
+      <div id="sc-list-empty" class="sc-empty sc-hidden"><p>还没有单词，去“生词本”里收藏一些吧</p></div>
+      <button type="button" id="sc-load-more" class="sc-btn-ghost sc-load-more sc-hidden">加载更多</button>
+    </main>
+  </section>
+
+  <!-- ============ 单词详情 ============ -->
+  <section id="sc-view-word" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-word-back" class="sc-btn-round">‹</button>
+        <div class="sc-list-hd-mid"><h1 id="sc-word-crumb">单词</h1></div>
+        <button type="button" id="sc-word-star" class="sc-btn-fav">☆</button>
+      </div>
+    </header>
+    <main class="sc-body">
+      <article class="sc-wordcard">
+        <h2 class="sc-word-w" id="sc-word-w">--</h2>
+        <p class="sc-word-p" id="sc-word-p"></p>
+        <div class="sc-word-say">
+          <button type="button" id="sc-say-word" class="sc-btn-ghost">🔊 朗读单词</button>
+        </div>
+        <div class="sc-word-t" id="sc-word-t">--</div>
+        <div class="sc-word-example sc-hidden" id="sc-word-example">
+          <p class="sc-ex-en" id="sc-ex-en"></p>
+          <p class="sc-ex-cn" id="sc-ex-cn"></p>
+          <button type="button" id="sc-say-example" class="sc-btn-mini">🔊 读例句</button>
+        </div>
+        <div class="sc-mastery">
+          <span class="sc-mastery-label">熟练度</span>
+          <div class="sc-mastery-row" id="sc-mastery-row">
+            <button type="button" data-level="new" class="sc-chip">未学</button>
+            <button type="button" data-level="learning" class="sc-chip">在学</button>
+            <button type="button" data-level="master" class="sc-chip">已掌握</button>
+          </div>
+        </div>
+        <div class="sc-word-pager">
+          <button type="button" id="sc-word-prev" class="sc-btn-ghost">‹ 上一个</button>
+          <span class="sc-word-idx" id="sc-word-idx"></span>
+          <button type="button" id="sc-word-next" class="sc-btn-ghost">下一个 ›</button>
+        </div>
+      </article>
+    </main>
+  </section>
+
+  <!-- ============ 记忆训练：设置（范围/数量/方式） ============ -->
+  <section id="sc-view-train" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-train-back" class="sc-btn-round">‹</button>
+        <div class="sc-list-hd-mid"><h1>记忆训练</h1></div>
+      </div>
+    </header>
+    <main class="sc-body">
+      <div class="sc-card">
+        <h3 class="sc-card-title">选择词书</h3>
+        <div class="sc-seg" id="sc-train-range">
+          <button type="button" data-range="cet4">四级</button>
+          <button type="button" data-range="cet6">六级</button>
+          <button type="button" data-range="kaoyan">考研</button>
+          <button type="button" data-range="star">生词本</button>
+          <button type="button" data-range="all" class="sc-on">全部</button>
+        </div>
+      </div>
+      <div class="sc-card">
+        <h3 class="sc-card-title">每轮词数</h3>
+        <div class="sc-seg" id="sc-train-count">
+          <button type="button" data-count="10">10</button>
+          <button type="button" data-count="20" class="sc-on">20</button>
+          <button type="button" data-count="30">30</button>
+          <button type="button" data-count="50">50</button>
+        </div>
+      </div>
+      <div class="sc-card">
+        <h3 class="sc-card-title">记忆方式</h3>
+        <div class="sc-train-modes" id="sc-train-modes">
+          <button type="button" data-mode="card" class="sc-train-btn sc-on">🂠 翻卡背诵</button>
+          <button type="button" data-mode="en2cn" class="sc-train-btn">看词选义</button>
+          <button type="button" data-mode="cn2en" class="sc-train-btn">看义选词</button>
+          <button type="button" data-mode="listen" class="sc-train-btn">🔊 听音选义</button>
+          <button type="button" data-mode="spell" class="sc-train-btn">✍ 拼写训练</button>
+        </div>
+      </div>
+      <button type="button" id="sc-train-start" class="sc-btn-primary sc-block">开始训练</button>
+      <button type="button" id="sc-train-review" class="sc-btn-ghost sc-block">今日复习 <b id="sc-due-n2">0</b> 词</button>
+    </main>
+  </section>
+
+  <!-- ============ 记忆训练：答题 ============ -->
+  <section id="sc-view-quiz" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-quiz-quit" class="sc-btn-round">✕</button>
+        <div class="sc-list-hd-mid"><h1 id="sc-quiz-title">训练</h1><span class="sc-list-count" id="sc-quiz-prog"></span></div>
+        <span class="sc-quiz-score" id="sc-quiz-score">0 / 0</span>
+      </div>
+      <div class="sc-progress"><div class="sc-progress-bar" id="sc-quiz-bar"></div></div>
+    </header>
+    <main class="sc-body">
+      <div class="sc-q-prompt" id="sc-q-prompt"></div>
+      <div class="sc-q-sub" id="sc-q-sub"></div>
+      <div class="sc-q-say sc-hidden" id="sc-q-say"><button type="button" id="sc-q-say-btn" class="sc-btn-ghost">🔊 再听一遍</button></div>
+      <div id="sc-q-options" class="sc-q-options"></div>
+      <div id="sc-q-spell" class="sc-q-spell sc-hidden">
+        <input type="text" id="sc-spell-input" class="sc-spell-input" placeholder="输入英文单词" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button type="button" id="sc-spell-submit" class="sc-search-btn">提交</button>
+      </div>
+      <div id="sc-q-card" class="sc-q-card sc-hidden">
+        <div class="sc-card-reveal" id="sc-card-reveal">点击卡片显示释义</div>
+        <div class="sc-card-grade" id="sc-card-grade">
+          <button type="button" data-grade="no" class="sc-chip sc-g-no">不认识</button>
+          <button type="button" data-grade="fuzzy" class="sc-chip sc-g-fuzzy">模糊</button>
+          <button type="button" data-grade="know" class="sc-chip sc-g-know">认识</button>
+        </div>
+      </div>
+      <div id="sc-q-feedback" class="sc-q-feedback sc-hidden"></div>
+      <button type="button" id="sc-q-next" class="sc-btn-primary sc-block sc-hidden">下一个 ›</button>
+      <div id="sc-quiz-result" class="sc-quiz-result sc-hidden"></div>
+    </main>
+  </section>
+
+  <!-- ============ 我收藏的句子 ============ -->
+  <section id="sc-view-sentfav" class="sc-view">
+    <header class="sc-hd sc-hd-compact">
+      <div class="sc-hd-row">
+        <button type="button" id="sc-sentfav-back" class="sc-btn-round">‹</button>
+        <div class="sc-list-hd-mid"><h1>我藏的句子</h1><span class="sc-list-count" id="sc-sentfav-count"></span></div>
+      </div>
+    </header>
+    <main class="sc-body">
+      <div id="sc-sentfav-wrap"></div>
+      <div id="sc-sentfav-empty" class="sc-empty sc-hidden"><p>还没有收藏句子，在首页点“收藏句子”吧</p></div>
+    </main>
+  </section>
+
+  <!-- ============ 底部导航 ============ -->
+  <nav class="sc-tabbar">
+    <button data-view="sc-view-home" class="sc-on"><span class="sc-tab-ico">✦</span><span>首页</span></button>
+    <button data-view="sc-view-train"><span class="sc-tab-ico">⚡</span><span>训练</span></button>
+    <button data-view-list="cet4"><span class="sc-tab-ico">四</span><span>四级</span></button>
+    <button data-view-list="cet6"><span class="sc-tab-ico">六</span><span>六级</span></button>
+    <button data-view-list="kaoyan"><span class="sc-tab-ico">研</span><span>考研</span></button>
+    <button data-view-list="star"><span class="sc-tab-ico">★</span><span>生词本</span></button>
+  </nav>
+
+  <div id="sc-toast" class="sc-toast sc-hidden"></div>
+
+  <script src="data-cet4.js?v=2"></script>
+  <script src="data-cet6.js?v=2"></script>
+  <script src="data-kaoyan.js?v=2"></script>
+  <script src="data-sentence.js?v=2"></script>
+  <script src="data-extra.js?v=2"></script>
+  <script src="app.js?v=2"></script>
+</body>
+</html>
