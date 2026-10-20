@@ -224,13 +224,82 @@ var SC_VERSION = 'v1.0.0-multi';
   }
 
   // 发音：Web Speech API（离线是否可朗读者依系统语音包，失败静默提示）
+  // 踩坑预防：
+  //   1) 很多中文 Android/WebView 默认拿到中文 voice，读英文会逐字母拼→ 必须显式选 en-* voice
+  //   2) 全大写单词会被当缩略词拼读 (如 LORD → L-O-R-D) → 朗读前转首字母大写
+  //   3) 弯引号/破折号/省略号部分引擎不认→ 切开单词，统一成 ASCII
+  var scVoices = null;
+  var scWarnedNoEnVoice = false;
+  function refreshVoices() {
+    try { if ('speechSynthesis' in window) scVoices = window.speechSynthesis.getVoices() || []; }
+    catch (e) { scVoices = null; }
+  }
+  if ('speechSynthesis' in window) {
+    refreshVoices();
+    try { window.speechSynthesis.addEventListener('voiceschanged', refreshVoices); } catch (e) {}
+  }
+  function pickEnglishVoice() {
+    var vs = scVoices || [];
+    var pref = ['en-US', 'en-GB', 'en-AU', 'en-IN', 'en-CA', 'en-IE', 'en-ZA', 'en-NZ'];
+    var i, j, lang;
+    for (i = 0; i < pref.length; i++) {
+      for (j = 0; j < vs.length; j++) {
+        lang = String(vs[j].lang || '').replace('_', '-').toLowerCase();
+        if (lang === pref[i].toLowerCase()) return vs[j];
+      }
+    }
+    for (j = 0; j < vs.length; j++) {
+      if (/^en([-_]|$)/i.test(vs[j].lang || '')) return vs[j];
+    }
+    return null;
+  }
+  // 朗读专用：将 KJV 古英语词形临时换成现代等价词（屏幕显示不变），
+  // 避免弱 voice / 中文 voice 因词典缺失而逐字母拼读（如 turneth）。
+  var ARCH_TTS = {
+    turneth: 'turns', sharpeneth: 'sharpens', goeth: 'goes', doeth: 'does', doth: 'does',
+    loveth: 'loves', walketh: 'walks', saith: 'says', hath: 'has', telleth: 'tells',
+    bringeth: 'brings', keepeth: 'keeps', maketh: 'makes', taketh: 'takes', giveth: 'gives',
+    knoweth: 'knows', thinketh: 'thinks', speaketh: 'speaks', seeketh: 'seeks',
+    dwelleth: 'dwells', becometh: 'becomes', enterceth: 'enters', spake: 'spoke'
+  };
+  function ttsSafe(text) {
+    var t = String(text == null ? '' : text);
+    t = t.replace(/[\u2018\u2019]/g, "'")
+         .replace(/[\u201C\u201D]/g, '"')
+         .replace(/[\u2013\u2014]/g, ' ')
+         .replace(/\u2026/g, ' ');
+    // ≥ 2 个字母的全大写 → 首字母大写，避免被当缩略词逐字母拼读 (I / A 不在匹配范围)
+    t = t.replace(/\b([A-Z]{2,})\b/g, function (_, w) {
+      return w.charAt(0) + w.slice(1).toLowerCase();
+    });
+    // 古词→现代词（仅影响发音），保留词首大写
+    t = t.replace(/[A-Za-z]+/g, function (m) {
+      var rep = ARCH_TTS[m.toLowerCase()];
+      if (!rep) return m;
+      return (m.charAt(0) === m.charAt(0).toUpperCase()) ? rep.charAt(0).toUpperCase() + rep.slice(1) : rep;
+    });
+    return t.replace(/\s+/g, ' ').trim();
+  }
   function speak(text) {
     try {
       if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
         toast('本设备不支持语音发音'); return;
       }
-      var u = new SpeechSynthesisUtterance(text);
+      if (!scVoices) refreshVoices();
+      var u = new SpeechSynthesisUtterance(ttsSafe(text));
       u.lang = 'en-US'; u.rate = 0.9; u.pitch = 1;
+      var v = pickEnglishVoice();
+      if (v) { u.voice = v; u.lang = v.lang || 'en-US'; }
+      else if (!scWarnedNoEnVoice) {
+        scWarnedNoEnVoice = true;
+        toast('未检测到英文语音包，发音可能不准（建议安装）');
+      }
+      u.onerror = function (ev) {
+        var n = (ev && ev.error) || '';
+        if (n === 'synthesis-failed' || n === 'synthesis-error') {
+          toast('本机缺少英文语音包，无法发音');
+        }
+      };
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(u);
     } catch (e) { toast('发音失败'); }
